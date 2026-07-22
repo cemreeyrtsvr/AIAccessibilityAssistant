@@ -47,7 +47,6 @@ FRAME_HEIGHT = 720
 
 FPS = 30
 
-# Bu ayar yalnızca yerel webcam kaynağı içindir; mobil istemci görüntülerine uygulanmaz.
 WEBCAM_MIRROR_CORRECTION = os.getenv(
     "WEBCAM_MIRROR_CORRECTION",
     "True",
@@ -64,6 +63,7 @@ TESSERACT_PATH = os.getenv(
 )
 
 OCR_LANGUAGE = "eng"
+OCR_TIMEOUT = int(os.getenv("OCR_TIMEOUT", "5"))
 
 
 # =========================
@@ -85,18 +85,20 @@ MODEL_NAME = os.getenv(
     "phi-4-mini"
 )
 
-MAX_RESPONSE_TOKENS = 300
-
-TEMPERATURE = 0.4
+MAX_RESPONSE_TOKENS = int(os.getenv("MAX_RESPONSE_TOKENS", "300"))
+TEMPERATURE = float(os.getenv("TEMPERATURE", "0.4"))
+LLM_TIMEOUT = int(os.getenv("LLM_TIMEOUT", "10"))
 
 
 # =========================
-# VISION
+# VISION & SCENE
 # =========================
 
 CONFIDENCE_THRESHOLD = 0.50
-
 DEVICE = "cuda"
+
+MAX_SCENE_OBJECTS = int(os.getenv("MAX_SCENE_OBJECTS", "5"))
+MIN_SCENE_PRIORITY = int(os.getenv("MIN_SCENE_PRIORITY", "20"))
 
 
 # =========================
@@ -104,7 +106,6 @@ DEVICE = "cuda"
 # =========================
 
 VOICE_RATE = 170
-
 VOICE_VOLUME = 1.0
 
 
