@@ -1,0 +1,40 @@
+# Virtual Environment
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Environment
+.env
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+temp/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Models
+models/*.pt
+models/*.onnx
+models/*.gguf
+
+# Build
+dist/
+build/
+
+# Test
+.pytest_cache/
+.coverage

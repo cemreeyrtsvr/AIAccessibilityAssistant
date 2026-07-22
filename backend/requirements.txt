@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+pydantic
+openai
+python-dotenv
+opencv-python
+pytesseract
+pillow
+pyttsx3
+python-multipart
+numpy
+ultralytics>=8.3.0
