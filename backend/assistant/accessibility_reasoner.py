@@ -94,6 +94,7 @@ class AccessibilityReasoner:
                 danger_level=danger_level,
                 is_warning=is_warning,
                 is_landmark=is_landmark,
+                tracker_id=obj.tracker_id,
             )
             reasoned_objects.append(reasoned_obj)
 

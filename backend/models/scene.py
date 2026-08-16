@@ -27,6 +27,9 @@ class SceneObject(BaseModel):
     distance: float | None = Field(default=None, ge=0.0)
     priority: int | None = Field(default=None, ge=0, le=100)
     confidence: float = Field(default=1.0, ge=0.0, le=1.0)
+    tracker_id: int | str | None = Field(
+        default=None, description="ObjectDetector'dan gelen kararlı nesne kimliği."
+    )
 
 
 class StructuredScene(BaseModel):
@@ -48,6 +51,11 @@ class ReasonedObject(BaseModel):
     danger_level: AlertSeverity = AlertSeverity.LOW
     is_warning: bool = False
     is_landmark: bool = False
+    tracker_id: int | str | None = Field(
+        default=None, description="ObjectDetector'dan gelen kararlı nesne kimliği."
+    )
+    is_direction_change: bool = False
+    prev_direction: Direction | None = None
 
 
 class WarningInfo(BaseModel):

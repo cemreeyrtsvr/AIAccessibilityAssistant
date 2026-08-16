@@ -6,7 +6,8 @@ python-dotenv
 opencv-python
 pytesseract
 pillow
-pyttsx3
+pywin32
 python-multipart
 numpy
 ultralytics>=8.3.0
+edge-tts

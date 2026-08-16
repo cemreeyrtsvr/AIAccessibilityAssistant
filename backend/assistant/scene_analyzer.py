@@ -88,6 +88,7 @@ class SceneAnalyzer:
                 distance=item.distance,
                 priority=None,
                 confidence=item.confidence,
+                tracker_id=item.tracker_id,
             )
         if isinstance(item, PrioritizedDetection):
             return SceneObject(
@@ -96,6 +97,7 @@ class SceneAnalyzer:
                 distance=item.detection.distance,
                 priority=item.priority,
                 confidence=item.detection.confidence,
+                tracker_id=item.detection.tracker_id,
             )
         if hasattr(item, "label") and hasattr(item, "direction"):
             return SceneObject(
@@ -104,6 +106,7 @@ class SceneAnalyzer:
                 distance=getattr(item, "distance", None),
                 priority=getattr(item, "priority", None),
                 confidence=getattr(item, "confidence", 1.0),
+                tracker_id=getattr(item, "tracker_id", None),
             )
         if hasattr(item, "object") and hasattr(item, "direction"):
             return SceneObject(
@@ -112,5 +115,6 @@ class SceneAnalyzer:
                 distance=getattr(item, "distance", None),
                 priority=getattr(item, "priority", None),
                 confidence=getattr(item, "confidence", 1.0),
+                tracker_id=getattr(item, "tracker_id", None),
             )
         return None

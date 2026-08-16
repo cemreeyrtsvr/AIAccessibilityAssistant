@@ -12,6 +12,7 @@ from config.settings import (
     FRAME_WIDTH,
     FRAME_HEIGHT,
     FPS,
+    WEBCAM_MIRROR_CORRECTION,
 )
 
 
@@ -38,8 +39,11 @@ class Camera:
 
         success, frame = self.cap.read()
 
-        if not success:
+        if not success or frame is None:
             return None
+
+        if WEBCAM_MIRROR_CORRECTION:
+            frame = cv2.flip(frame, 1)
 
         return frame
 

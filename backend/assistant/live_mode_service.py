@@ -17,7 +17,19 @@ from vision.detector import ObjectDetector
 
 
 class LiveModeService:
-    """Canlı Mod hattını orkestre eden, kare sınırlaması, sahne değişikliği ve erişilebilirlik akıl yürütmesi uygulayan servis."""
+    """Canlı Mod hattını orkestre eden servis.
+
+    Pipeline:
+        Frame
+        ↓ FrameThrottle
+        ↓ ObjectDetector
+        ↓ PriorityEngine
+        ↓ SceneAnalyzer
+        ↓ SceneChangeDetector  → False: erken dön
+        ↓ AccessibilityReasoner
+        ↓ ShortTermMemory
+        ↓ SpeechManager
+    """
 
     def __init__(
         self,
@@ -40,12 +52,12 @@ class LiveModeService:
         self.frame_throttle = frame_throttle or FrameThrottle()
 
     def process_frame(self, frame: np.ndarray) -> LiveModeResult:
-        """Gelen kareden canlı mod işleme ve erişilebilirlik akıl yürütme hattını çalıştırır."""
+        """Gelen kareden canlı mod işleme hattını çalıştırır ve LiveModeResult döndürür."""
         if not isinstance(frame, np.ndarray) or frame.size == 0:
             empty_scene = StructuredScene(objects=[], total_detected=0)
             return LiveModeResult(spoken=False, scene=empty_scene, spoken_text=None)
 
-        # 1. FrameThrottle
+        # 1. FrameThrottle — sınır aşıldıysa atla
         if not self.frame_throttle.should_process():
             empty_scene = StructuredScene(objects=[], total_detected=0)
             return LiveModeResult(spoken=False, scene=empty_scene, spoken_text=None)
@@ -62,14 +74,17 @@ class LiveModeService:
         # 4. SceneAnalyzer
         structured_scene = self.scene_analyzer.analyze_scene(prioritized)
 
-        # 5. SceneChangeDetector
+        # 5. SceneChangeDetector — değişiklik yoksa erken dön;
+        #    AccessibilityReasoner, ShortTermMemory ve SpeechManager ÇALIŞMAZ.
         if not self.scene_change_detector.has_changed(structured_scene):
+            self.short_memory.update_last_seen(structured_scene.objects)
             return LiveModeResult(spoken=False, scene=structured_scene, spoken_text=None)
 
         # 6. AccessibilityReasoner
         reasoned_scene = self.accessibility_reasoner.reason(structured_scene)
 
-        # 7. ShortMemory (süzgeç)
+        # 7. ShortTermMemory — sürekli görünen nesneleri ve yön/tehlike değişmeyen
+        #    statik nesneleri sessizleştir
         new_objects = [
             obj
             for obj in reasoned_scene.objects_to_announce
@@ -79,7 +94,7 @@ class LiveModeService:
         if not new_objects:
             return LiveModeResult(spoken=False, scene=structured_scene, spoken_text=None)
 
-        # 8. SpeechManager (yüksek seviyeli konuşma kapsüllemesi)
+        # 8. SpeechManager
         spoken_text = self.speech_manager.speak_scene(new_objects)
 
         return LiveModeResult(

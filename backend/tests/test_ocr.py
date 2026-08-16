@@ -1,42 +1,30 @@
-import cv2
+"""
+OCR integration tests.
+"""
 
 from camera.camera import Camera
 from ocr.ocr_reader import OCRReader
 
-camera = Camera()
-ocr = OCRReader()
 
-print("\nOCR Test Started")
-print("Press 'R' to read text.")
-print("Press 'Q' to quit.\n")
+def test_ocr_reader_runs() -> None:
+    """
+    Verify that OCR can process a captured frame without crashing.
+    """
 
-while True:
+    camera = Camera()
+    ocr = OCRReader()
 
-    frame = camera.read()
+    try:
+        assert camera.is_opened()
 
-    if frame is None:
-        break
+        frame = camera.capture_frame()
 
-    cv2.imshow("OCR Test", frame)
-
-    key = cv2.waitKey(1) & 0xFF
-
-    if key == ord("r"):
+        assert frame is not None
 
         text = ocr.read_text(frame)
 
-        print("\nDetected Text")
-        print("-----------------------")
+        # OCR text may legitimately be empty depending on the scene.
+        assert text is None or isinstance(text, str)
 
-        if text:
-            print(text)
-        else:
-            print("No text detected.")
-
-        print("-----------------------")
-
-    elif key == ord("q"):
-        break
-
-camera.release()
-cv2.destroyAllWindows()
+    finally:
+        camera.release()
